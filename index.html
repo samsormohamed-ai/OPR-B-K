@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OPR B&K SK Jawi</title>
+<meta name="theme-color" content="#146c36">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OPR B&K">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  html,body{margin:0;height:100%;background:#146c36;overflow:hidden}
+  #app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#f3f5f1;
+       padding-top:env(safe-area-inset-top);box-sizing:border-box}
+  #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+          background:linear-gradient(160deg,#1f8a47,#0b3f20);color:#fff;font:600 15px system-ui,-apple-system,Roboto,Arial,sans-serif;
+          transition:opacity .4s;z-index:2;text-align:center;padding:20px}
+  #splash img{width:110px;height:110px;border-radius:26px;box-shadow:0 8px 24px #0005}
+  #splash small{opacity:.8;font-weight:400}
+  .spin{width:26px;height:26px;border:3px solid #ffffff44;border-top-color:#f2c230;border-radius:50%;animation:s 1s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  #splash a{color:#f2c230;display:none}
+  .hide{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="splash">
+  <img src="icon-192.png" alt="">
+  <div>OPR Bimbingan & Kaunseling<br><small>Sekolah Kebangsaan Jawi</small></div>
+  <div class="spin" id="spin"></div>
+  <div id="msg"></div>
+  <a id="direct" target="_blank" rel="noopener">Buka terus aplikasi</a>
+</div>
+<iframe id="app" title="OPR B&K SK Jawi" allow="web-share; clipboard-write; camera"></iframe>
+
+<script>
+  // ▼▼▼ TAMPAL URL WEB APP (Deploy → Web app) ANDA DI SINI ▼▼▼
+  const WEB_APP_URL = "https://script.google.com/macros/s/TAMPAL_ID_DEPLOYMENT_ANDA/exec";
+  // ▲▲▲
+
+  const $ = id => document.getElementById(id);
+  const splash = $("splash"), frame = $("app");
+  $("direct").href = WEB_APP_URL;
+
+  function showMsg(t) { $("spin").style.display = "none"; $("msg").textContent = t; $("direct").style.display = "inline"; }
+
+  if (!navigator.onLine) {
+    showMsg("Tiada sambungan internet. Sila sambung dan buka semula.");
+  } else if (/TAMPAL_ID/.test(WEB_APP_URL)) {
+    showMsg("URL web app belum ditetapkan dalam index.html.");
+  } else {
+    frame.addEventListener("load", () => splash.classList.add("hide"));
+    frame.src = WEB_APP_URL;
+    setTimeout(() => { if (!splash.classList.contains("hide")) $("direct").style.display = "inline"; }, 12000);
+  }
+  window.addEventListener("online", () => location.reload());
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
